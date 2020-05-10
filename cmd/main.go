@@ -11,7 +11,7 @@ import (
 	"github.com/gofiber/template"
 )
 
-// PublicRoot defines the root path to static files
+// PublicRoot defines the root path for static assets
 type PublicRoot struct {
 	path string
 }
