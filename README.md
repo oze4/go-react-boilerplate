@@ -15,7 +15,7 @@ Go + React Boilerplate, using [`fiber`](https://github.com/gofiber/fiber)
 
 | Command | Result | Notes |
 | --- | --- | --- |
-| `make start` | Builds and runs project | Same as running `make build` and then `make run-build` |
+| `make start` | Compiles project, then runs binary | Same as running `make build` and then `make run-build` |
 | `make build` | Builds project using `go build` | |
 | `make run-build` | Runs compiled binary | Run `make build` prior to running this command |
 | `make run` | Uses the `go run` command to build (in memory) and run project | |
