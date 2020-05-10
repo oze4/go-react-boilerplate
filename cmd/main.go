@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"log"
+	"strings"
 
 	"github.com/gofiber/fiber"
 	"github.com/gofiber/helmet"
@@ -10,11 +11,20 @@ import (
 	"github.com/gofiber/template"
 )
 
+// PublicRoot defines the root path to static files
+type PublicRoot struct {
+	path string
+}
+
+func (pr *PublicRoot) resolveFileName(n string) string {
+	return fmt.Sprintf("%s/%s", strings.Trim(pr.path, "\\/"), strings.Trim(n, "\\/"))
+}
+
 func main() {
 	app := fiber.New()
+	staticDir := PublicRoot{path: "./public"}
 
-	PublicRoot := "./public"
-	app.Static("/", PublicRoot)
+	app.Static("/", staticDir.path)
 
 	app.Use(helmet.New())
 	app.Use(logger.New())
@@ -29,7 +39,7 @@ func main() {
 
 		// This just shows how you can use Handlebars to render a template if needed.
 		// In order to use with React, you would just place the built files into "./public".
-		render := fmt.Sprintf("%s/index.hbs", PublicRoot)
+		render := staticDir.resolveFileName("index.hbs")
 		if err := c.Render(render, data); err != nil {
 			c.Status(500).Send(err.Error())
 		}
