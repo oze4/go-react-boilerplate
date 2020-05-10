@@ -27,8 +27,8 @@ func main() {
 			"message": "Hello, world!",
 		}
 
-		// This just shows how you can use Handlebars to render a template if needed, but
-		// in order to use with React, you would just place the built files into './public'
+		// This just shows how you can use Handlebars to render a template if needed.
+		// In order to use with React, you would just place the built files into "./public".
 		render := fmt.Sprintf("%s/index.hbs", PublicRoot)
 		if err := c.Render(render, data); err != nil {
 			c.Status(500).Send(err.Error())
