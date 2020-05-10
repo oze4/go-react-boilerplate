@@ -5,9 +5,9 @@ import (
 	"log"
 
 	"github.com/gofiber/fiber"
-	"github.com/gofiber/template"
 	"github.com/gofiber/helmet"
 	"github.com/gofiber/logger"
+	"github.com/gofiber/template"
 )
 
 func main() {
