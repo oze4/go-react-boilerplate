@@ -3,27 +3,23 @@ package main
 import (
 	"fmt"
 	"log"
+	"os"
 	"strings"
 
 	"github.com/gofiber/fiber"
 	"github.com/gofiber/helmet"
 	"github.com/gofiber/logger"
 	"github.com/gofiber/template"
+	"github.com/joho/godotenv"
 )
 
-// PublicRoot defines the root path for static assets
-type PublicRoot struct {
-	path string
-}
-
-func (pr *PublicRoot) resolveFileName(n string) string {
-	return fmt.Sprintf("%s/%s", strings.Trim(pr.path, "\\/"), strings.Trim(n, "\\/"))
-}
-
 func main() {
-	app := fiber.New()
-	staticDir := PublicRoot{path: "./public"}
+	envConfig := dotEnvConfig{exitOnError: false}
+	initDotEnv(envConfig)
 
+	app := fiber.New()
+
+	staticDir := PublicRoot{path: "./public"}
 	app.Static("/", staticDir.path)
 
 	app.Use(helmet.New())
@@ -32,8 +28,8 @@ func main() {
 	app.Settings.TemplateEngine = template.Handlebars()
 
 	app.Get("*", func(c *fiber.Ctx) {
-		// Can also use `fiber.map{...}` instead of `map[string]interface{}{...}`
-		data := map[string]interface{}{
+		// Can also use `map[string]interface{}{...}` instead of `fiber.map{...}`
+		data := fiber.Map{
 			"message": "Hello, world!",
 		}
 
@@ -45,7 +41,35 @@ func main() {
 		}
 	})
 
-	if err := app.Listen(3000); err != nil {
+	port := "3030"
+	if ep := os.Getenv("PORT"); ep != "" {
+		port = ep
+	}
+
+	if err := app.Listen(port); err != nil {
 		log.Fatal(err)
+	}
+}
+
+// PublicRoot defines the root path for static assets
+type PublicRoot struct {
+	path string
+}
+
+func (pr *PublicRoot) resolveFileName(n string) string {
+	return fmt.Sprintf("%s/%s", strings.Trim(pr.path, "\\/"), strings.Trim(n, "\\/"))
+}
+
+type dotEnvConfig struct {
+	exitOnError bool
+}
+
+func initDotEnv(args dotEnvConfig) {
+	if err := godotenv.Load(); err != nil {
+		em := fmt.Sprintf("\n\n[ERROR][dotenv][PLEASE CONSIDER CREATING A .env FILE. YOU MAY ENCOUNTER BUGS OR EXPERIENCE ODD BEHAVIOR WITHOUT A .env FILE!] %s\n\n", err.Error())
+		if args.exitOnError {
+			log.Fatal(em)
+		}
+		fmt.Println(em)
 	}
 }
